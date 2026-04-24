@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { createShop } from "../../api";
+import { supabase } from "../../supabaseClient";
 import "./CreateShop.css";
 
 export default function CreateShop() {
@@ -61,29 +62,13 @@ export default function CreateShop() {
         owner_id: user.id
       };
 
-      const { error } = await supabase
-        .from("shops")
-        .insert([payload]);
+      // 🔴 ORIGINAL IDEA (this was supposed to be API function)
+      await createShop(payload);
 
-      if (error) {
-        console.log(error);
-        alert("Error creating shop");
-        return;
-      }
-
-      alert("Shop created successfully! 🎉");
-
-      // reset form
-      setFormData({
-        title: "",
-        description: "",
-        category: "",
-        tags: []
-      });
+      alert("Shop created!");
 
     } catch (err) {
       console.log(err);
-      alert("Something went wrong");
     }
   };
 
@@ -97,7 +82,6 @@ export default function CreateShop() {
           className="shop-input"
           name="title"
           placeholder="Shop Title"
-          value={formData.title}
           onChange={handleChange}
         />
 
@@ -105,18 +89,15 @@ export default function CreateShop() {
           className="shop-input"
           name="description"
           placeholder="Description"
-          value={formData.description}
           onChange={handleChange}
         />
 
         <select
           className="shop-select"
           name="category"
-          value={formData.category}
           onChange={handleChange}
         >
           <option value="" disabled>Select Category</option>
-
           {categories.map((c, i) => (
             <option key={i} value={c}>
               {c}
